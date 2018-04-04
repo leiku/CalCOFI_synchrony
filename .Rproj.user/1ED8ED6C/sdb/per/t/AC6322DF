@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\nrm(list=ls())\nds.two<-readRDS(\"Data_TwoLayers.RDS\")  #original or detrend?\ni.season<-2 #spring\nds.two<-ds.two[[i.season]]\n\nc.top<-ds.two[[1]][[3]]\nc.bottom<-ds.two[[2]][[3]]\n\n############# Fig5: CoVar #########\ncv<-matrix(NA, nrow(c.top), 3)\nrow.names(cv)<-row.names(c.top)\ncolnames(cv)<-c(\"top\",\"bottom\",\"all\")\nfor(i in 1:nrow(c.top)){\n  cv[i,1]<-sd(c.top[i,])/mean(c.top[i,])\n  cv[i,2]<-sd(c.bottom[i,])/mean(c.bottom[i,])\n  cv[i,3]<-sd(c.top[i,]+c.bottom[i,])/mean(c.top[i,]+c.bottom[i,])\n}\n\n## surrogate\ncv.rand<-matrix(NA, nrow(c.top), 1000)\nfor(i in 1:nrow(c.top)){\n  x<-c.top[i,]\n  y<-c.bottom[i,]\n  for(j in 1:1000){\n    y1<-sample(y, length(y), replace=F)\n    cv.rand[i,j]<-sd(x+y1)/mean(x+y1)\n  }\n}\nsaveRDS(list(cv=cv, cv.rand=cv.rand), \"res_CoVar_rand.RDS\")\n\n#### plot\nCV<-readRDS(\"res_CoVar_rand.RDS\")\ncv<-CV[[1]]\ncv.rand<-CV[[2]]\ncv.rand.ci<-t(apply(cv.rand, 1, quantile, c(0.025, 0.5, 0.975)))\n\ncols<-rep(\"purple\", nrow(cv))\ncols[cv[,3]<=cv.rand.ci[,1]]<-\"forestgreen\"\ncols[cv[,3]>=cv.rand.ci[,3]]<-\"red\"\n\ntiff(\"Fig5_cv_distance_shore_original.tif\", width=8, height=5, units=\"in\",res=300,compression = \"lzw\")\nop<-par(oma=c(1,1,1,1), mar=c(3,3,1,1),mgp=c(2,0.5,0))\n\nplot(dists, cv[,3], ylim=range(cbind(cv[,3], cv.rand.ci)), pch=16, col=cols, xlab=\"distance from shore (km)\", ylab=\"coefficient of variation\")\narrows(dists, cv.rand.ci[,1], dists, cv.rand.ci[,3], length=0.05, angle=90, code=3)\nlines(c(240, 240),c(0,1.5), lty=\"dashed\")\npar(op)\ndev.off()\n\n\n",
+    "created" : 1522820127344.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "529684890",
+    "id" : "AC6322DF",
+    "lastKnownWriteTime" : 1522820305,
+    "last_content_update" : 1522820305934,
+    "path" : "D:/Git/CalCOFI/main_TwoLayers_stability.R",
+    "project_path" : "main_TwoLayers_stability.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
