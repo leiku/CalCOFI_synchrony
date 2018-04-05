@@ -1,3 +1,4 @@
 .tif
 .pdf
 .RDS
+Data_all_seasons_detrend.RDS Data_all_seasons_interpolate.RDS Data_TwoLayers.RDS Data_TwoLayers_clean.RDS Data_TwoLayers_detrend.RDS res_coherence_clean.RDS res_coherence_factors_clean.RDS res_CoVar_rand.RDS res_distance_from_shore.RDS res_mrm_three.RDS res_wmrsig_Chla.shallow_N.deep.RDS res_wmrsig_Chla.shallow_T.deep.RDS res_wmrsig_three.RDS

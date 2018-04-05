@@ -65,7 +65,6 @@ dev.off()
 Y<-lapply(X, synmat, method="pearson")   #list of correlation matrix
 
 modelnames<-list(2, c(3,4), c(2,3,4))
-modelnames<-lapply(modelnames, as.integer)
 ans3<-lno.weights(mats=Y[1:4], model.names=modelnames, n=3, nrand=1000, maxruns=1000) 
 ans4<-summed.weights(varnames=names(Y[1:4]), weights=ans3)
 #D: There is possibly a problem with summed.weights, definitely a problem with the example in summed.weights, possibly a problem with the way it is called here. Lei pls fix.
@@ -80,3 +79,10 @@ ans.mrm<-readRDS("res_mrm_three.RDS")
 ans3<-lno.weights(mats=Y[c(1,3,4)], n=3, nrand=1000, maxruns=1000) 
 #D: add a call to summed.weights once fixed
 #D: need to get the variables for shallow up above, then similar call for shallow
+
+################ matrix regression tests ##############
+Y<-lapply(X, synmat, method="pearson")   #list of correlation matrix
+model1<-matregtest(resp=Y[[1]],preds=Y[2:4],drop=2:3,numperm=10000)
+model2<-matregtest(resp=Y[[1]],preds=Y[2:4],drop=1,numperm=10000)
+
+
