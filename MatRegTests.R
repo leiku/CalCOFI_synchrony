@@ -1,0 +1,58 @@
+#A function for doing matrix regression tests of a model against a nested model.
+#
+#Args
+#resp         A response variable matrix, square
+#preds        A list of predictor matrices of the same dimensions as resp
+#drop         A vector of indices of the predictors in preds to drop in the 
+#               simpler model
+#numperm      Number of permutations on which to base the test
+#
+#Output - a named list with these elements
+#ssr_dat      sum of squared residuals for the linear regression using all predictors
+#ssr_perm     vector of sum of squares of residuals for linear regressions using
+#               randomized matrices for the indices "drop"
+#p            p value of the test of the simpler model as a null hypothesis against
+#               the more complex model as an alternative 
+#
+#Note: no error checking is done so this is a function for our own use
+#
+matregtest<-function(resp,preds,drop,numperm)
+{
+  n<-dim(resp)[1]
+  
+  #A) do a regression of triang(resp) against the vectors triang(preds[[n]]) for 
+  #n in 1:length(preds), and save the sum of squared residuals
+  #***D: Lei, pls fill in
+  ssres<- #put sum squared residuals here
+  
+  #B) apply the randomization to the matrices that are dropped in the simpler model 
+  #and then repeat the regression, numperm times
+  ssres_perm<-NA*numeric(numperm)
+  for (permcount in 1:numperm)
+  {
+    #randomize the dropped variables
+    perm<-sample.int(n,n) #this is the randomization
+    for (predcount in 1:length(drop))
+    {
+      preds[[drop[predcount]]]<-preds[[drop[predcount]]][perm,perm]
+    }
+    
+    #redo the regression from A with the permuted matrices
+    #***D: Lei pls fill in
+    ssres_perm[permcount]<-#put the ss resids from the regression here
+  }
+  
+  #C) the results as follows
+  p<-sum(ssres_perm<ssres)/numperm
+  return(list(ssr_dat=ssres,ssr_perm=ssres_perm,p=p))
+}
+  
+#Extracts the lower-triangular portion of the square matrix m (no diagonal)
+#as a vector.
+#
+#Note: no error checking is done so this is a function for our own use
+#
+triang<-function(m)
+{
+  #Lei pls fill in
+}
