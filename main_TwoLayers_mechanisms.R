@@ -3,16 +3,7 @@ library(Reumannplatz)
 library(ecodist)
 
 ######### get data ready ############
-DS.two<-readRDS("Data_TwoLayers.RDS")
-for(i.season in 1:4){
-  for(f in 1:3){
-    tmp<-CleanData(DS.two[[i.season]][[1]][[f]], normalize=T, each.ts=T, rescale=T, do.plot=F)
-    DS.two[[i.season]][[1]][[f]]<-tmp$cleandat
-    tmp<-CleanData(DS.two[[i.season]][[2]][[f]], normalize=T, detrend=T, rescale=T, do.plot=F)
-    DS.two[[i.season]][[2]][[f]]<-tmp$cleandat
-  }
-}
-saveRDS(DS.two,"Data_TwoLayers_clean.RDS")
+
 
 ds.two<-readRDS("Data_TwoLayers_clean.RDS")
 i.season<-2 #spring
@@ -85,4 +76,31 @@ Y<-lapply(X, synmat, method="pearson")   #list of correlation matrix
 model1<-matregtest(resp=Y[[1]],preds=Y[2:4],drop=2:3,numperm=10000)
 model2<-matregtest(resp=Y[[1]],preds=Y[2:4],drop=1,numperm=10000)
 
+
+############### TEST LIMITING FACTORS #########
+######## wavelet multiple linear regression #######
+tsranges2<-matrix(c(2,12, 2,4, 4,12), 3,2, byrow=T)  # all, short (2-4), long (4-12)
+ans.sT.TN<-wmrsig(X[c(1,3,4)], r=1, n=2, s=2, n.surrog = 10000, surr.test=T, tsranges=tsranges2)  #surrogate C
+ans.sN.TN<-wmrsig(X[c(1,3,4)], r=1, n=2, s=3, n.surrog = 10000, surr.test=T, tsranges=tsranges2)  #surrogate T
+ans.oT<-wmrsig(X[c(1,3)], r=1, n=1, s=2, n.surrog = 10000, surr.test = T, tsranges = tsranges2)  #only contain T
+ans.oN<-wmrsig(X[c(1,4)], r=1, n=1, s=2, n.surrog = 10000, surr.test = T, tsranges = tsranges2)  #only contain N
+
+ans<-list(sT=ans.sT.TN, sN=ans.sN.TN, oT=ans.oT, oN=ans.oN)
+saveRDS(ans, "res_wmrsig_two_TN.RDS")
+
+tiff("Fig_wmrsig_two_TN.tif", width=8, height=8, units="in",res=300,compression = "lzw")
+op<-par(mfcol=c(2,1), oma=c(1,1,1,1), mar=c(3,3,1,1),mgp=c(2,0.5,0))
+names.panel<-c("both","solely")
+ans<-readRDS('res_wmrsig_two_TN.RDS')
+for(i in 1:2){
+  ans1<-ans[[2*i-1]]  #sC
+  ans2<-ans[[2*i]]  #sT
+  plot(ans1$timescales, ans1$pval, typ="l", col="blue", ylim=c(0,1),xlab="timescale", ylab="p-value", cex.lab=1.3)
+  lines(ans2$timescales, ans2$pval, col="red")
+  lines(c(0,20),c(0.05, 0.05), lty="dashed")
+  mtext(paste0("(",letters[i],") ", names.panel[i]), side=3, adj=0.02, line=-1.2, cex=0.9)
+  if(i==2){legend("topright", legend=c("surr T.deep", "surr N.deep"), lty="solid", col=c("blue","red"), horiz=F, cex=1.2)}
+}
+par(op)
+dev.off()
 
