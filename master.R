@@ -4,7 +4,8 @@
 #Lei Zhao
 #_________
 
-#D: Lei, pls insert csvs downloaded from Calcofi, or send to Dan
+#***DAN: either now or later, put in checkpoint functionality and also see if we can install reumanplatz as it existed on a particular date
+#***DAN: we also need to review the wavelet tests
 
 #***load the raw data and get the seasonal data ***
 #1. choose right sites and get spatial averaged data
