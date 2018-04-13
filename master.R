@@ -4,7 +4,7 @@
 #Lei Zhao
 #_________
 
-#***DAN: either now or later, put in checkpoint functionality and also see if we can install reumanplatz as it existed on a particular date
+
 library(checkpoint)
 if (!dir.exists("./.checkpoint/")){
   dir.create("./.checkpoint/")
