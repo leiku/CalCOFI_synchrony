@@ -2,84 +2,6 @@ rm(list=ls())
 library(Reumannplatz)
 library(igraph)
 
-###### fig.test: show all the timeseries, and the index of sites #########
-ds.two<-readRDS("Data_TwoLayers.RDS")
-i.season<-2 #spring
-ds.two<-ds.two[[i.season]]
-
-c.top<-ds.two[[1]][[3]]
-c.bottom<-ds.two[[2]][[3]]
-
-network_layout.site<-function(input.site){
-  n.site<-length(input.site)
-  site.coordinate<-read.csv(file="CalCOFIStaPos113.csv")
-  Site1<-site.coordinate$Line*10000+site.coordinate$Station
-  Site1[Site1==818046.9]<-820047
-  tmp<-match(input.site,Site1)
-  
-  longitude=-site.coordinate$Dlongitude[tmp]
-  latitude<-site.coordinate$Station.Dlatitude[tmp]
-  layout.position<-cbind(longitude,latitude)
-  return(layout.position)
-}
-
-positions<-network_layout.site(as.numeric(rownames(c.top)))
-tiff("fig_test_locations.tif", width=7, height=7, units="in",res=300,compression = "lzw")
-plot(positions[,1], positions[,2], pch=1, cex=3, xlab="longitude", ylab="latitude")
-text(positions[,1], positions[,2], 1:55, cex=1)
-dev.off()
-
-pdf("fig_test_timeseries_original.pdf", width=12, height=17)
-op<-par(mfrow=c(11,5), oma=c(3,3,3,3), mar=c(1.5,1.5,1.5,1.5),mgp=c(2.2,0.5,0))
-for(ii in 1:55){
-  plot(1:28+1983, c.top[ii,], xlab=NA, ylab=NA, pch=20, col="darkgreen", cex.lab=1.2, yaxt="n")
-  lines(1:28+1983, c.top[ii,],  col="darkgreen")
-  axis(2,col.axis="darkgreen",col.lab="darkgreen")
-  
-  par(usr=c(par("usr")[1:2], range(c.bottom[ii,])))
-  points(1:28+1983, c.bottom[ii,], pch=20, col="purple")
-  lines(1:28+1983, c.bottom[ii,],  col="purple")
-  axis(4,col.axis="purple",col.lab="purple")
-  
-  mtext(paste0("(",ii,")"), side=3, line=-1.2, adj=0.05, cex=0.9, col="red")
-}
-par(fig = c(0, 1, 0, 1), oma=c(0.5,0.5,1,0), mar = c(2.5, 2.5, 0, 0), mgp=c(1,0,0), new = TRUE)
-plot(NA, xlim=c(0,1),ylim=c(0,1), xlab="year",ylab="concentration of Chl-a",
-     type = "n", bty = "n", xaxt = "n", yaxt = "n", cex.lab=1.2, font.lab=1.5)
-legend("top", c("shallow","deep"), col=c("darkgreen","purple"),lty="solid",pch=20, horiz=T,cex=1.2)
-dev.off()
-
-## show timeseries of site 11 as well as 6 and 10
-ds<-readRDS("Data_all_seasons_interpolate.RDS")
-i.season<-2
-
-x<-ds[[i.season]][[3]]
-plot(NA, xlim=range(1:28+1983),ylim=c(0,1.7),xlab="year",ylab="Chl-a")
-for(i in 1:9){
-  lines(1:28+1983, x[[i]][11,],col=rainbow(9)[i])
-}
-legend("top", names(x), pch=20,col=rainbow(9), horiz=T)
-
-pdf("fig_test_timeseries_original_site11.pdf", width=10, height=8)
-op<-par(mfrow=c(3,3), oma=c(3,3,3,3), mar=c(1.5,1.5,1.5,1.5),mgp=c(2.2,0.5,0))
-for(i in 1:9){
-  plot(1:28+1983, x[[i]][11,], ylim=range(x[[i]][c(6,10,11),]), xlab=NA, ylab=NA, pch=20, col="black", cex.lab=1.2)
-  lines(1:28+1983, x[[i]][11,],  col="black")
-  
-  points(1:28+1983, x[[i]][6,], pch=20, col="red")
-  lines(1:28+1983, x[[i]][6,],  col="red")
-  points(1:28+1983, x[[i]][10,], pch=20, col="blue")
-  lines(1:28+1983, x[[i]][10,],  col="blue")
-  
-  mtext(paste0("(",i,") ",names(x)[i],"m"), side=3, line=-1.2, adj=0.05, cex=0.9, col="red")
-}
-par(fig = c(0, 1, 0, 1), oma=c(0.5,0.5,1,0), mar = c(2.5, 2.5, 0, 0), mgp=c(1,0,0), new = TRUE)
-plot(NA, xlim=c(0,1),ylim=c(0,1), xlab="year",ylab="concentration of Chl-a",
-     type = "n", bty = "n", xaxt = "n", yaxt = "n", cex.lab=1.2, font.lab=1.5)
-legend("top", c("11","6","10"), col=c("black","red","blue"),lty="solid",pch=20, horiz=T,cex=1.2)
-dev.off()
-
-
 
 ###### Fig2: Correlations between shallow and deep Chla  ##################
 ds.two<-readRDS("Data_TwoLayers_detrend.RDS")
@@ -144,7 +66,7 @@ lines(1:28+1983, c.bottom[ii,],  col="purple")
 axis(4,col.axis="purple",col.lab="purple")
 mtext(paste0("(a)"), side=3, line=-1.2, adj=0.05, cex=1)
 
-ii<-24
+ii<-8
 plot(1:28+1983, c.top[ii,], xlab=NA, ylab=NA, pch=20, col="darkgreen", cex.lab=1.2, yaxt="n")
 lines(1:28+1983, c.top[ii,],  col="darkgreen")
 axis(2,col.axis="darkgreen",col.lab="darkgreen")
@@ -174,9 +96,9 @@ colors[inds2]<-cols2[ceiling(100*rr[inds2])]
 
 plot(locations[,1], locations[,2], col=colors, pch=20, xlab="longitude", ylab="latitude", cex=4, cex.lab=1.2)
 points(locations[38,1], locations[38,2], col="darkgrey", cex=5, pch=1)
-points(locations[24,1], locations[24,2], col="darkgrey", cex=5, pch=1)
+points(locations[8,1], locations[8,2], col="darkgrey", cex=5, pch=1)
 text(locations[38,1], locations[38,2]+0.3, "a", col="black",cex=1.1)
-text(locations[24,1], locations[24,2]+0.3, "b", col="black",cex=1.1)
+text(locations[8,1], locations[8,2]+0.3, "b", col="black",cex=1.1)
 mtext("(c)", side=3, line=-1.2, adj=0.05, cex=1)
 
 #color bar

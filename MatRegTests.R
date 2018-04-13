@@ -56,14 +56,14 @@ matregtest<-function(resp,preds,drop,numperm)
 }
   
 #Extracts the lower-triangular portion of the square matrix m (no diagonal)
-#as a vector, UNLESS the lower-triangle is all 0s, in which case it returns 
+#as a vector, UNLESS the lower-triangle is all 0s or NAs, in which case it returns 
 #the upper triangle.
 #
 #Note: no error checking is done so this is a function for our own use
 #
 triang<-function(m)
 {
-  if(all(m[lower.tri(m)]==0)){
+  if(all(m[lower.tri(m)]==0) | all(is.na(m[lower.tri(m)]))){
     return(as.vector(m[upper.tri(m)])) #if m is a upper triangular matrix, return the upper triangular matrix
   }else{return(as.vector(m[lower.tri(m)]))} #else return the lower triangular matrix
 }

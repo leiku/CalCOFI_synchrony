@@ -40,32 +40,33 @@ a<-1
 for(f in 1:3){
   for(j in 1:2){
     x<-ans[[a]]
-    plot(1/x$timescales, x$Arg, ylim=c(-pi, pi), pch=20, xlab=NA, ylab=NA,cex=1.5)
+    plot(x$timescales, x$Arg, ylim=c(-pi, pi), pch=20, xlab=NA, ylab=NA,cex=1.5)
 
     par(usr=c(par("usr")[1:2], c(0,1)))
-    lines(1/x$timescales, x$p.timescale,  col="red")
-    lines(range(1/x$timescales), c(0.05,0.05), lty="dashed", col="red")
+    lines(x$timescales, x$p.timescale,  col="red")
+    lines(range(x$timescales), c(0.05,0.05), lty="dashed", col="red")
     axis(4,col.axis="red",col.lab="red")
     
-    mtext(paste0("(",letters[a],")"), side=3, line=-2.2, adj=0.05, cex=0.9)
-    if(a==2){
-      mtext(paste0("p(low-freq): ",round(x$pvals[5],3)), side=1, line=-3.7, adj=0.95,cex=0.8)
-      mtext(paste0("p(high-freq): ",round(x$pvals[4],3)), side=1, line=-2.5, adj=0.95,cex=0.8)
-    }else{
-      mtext(paste0("p(low-freq): ",round(x$pvals[5],3)), side=3, line=-1.2, adj=0.95,cex=0.8)
-      mtext(paste0("p(high-freq): ",round(x$pvals[4],3)), side=3, line=-2.5, adj=0.95,cex=0.8)
-    }
+    lines(c(4,4),c(-4,4), lty="dashed", col="darkgray")
+    
+    p<-as.character(round(x$pvals[4:5],3))
+    p[p!=0]<-paste0("=",p[p!=0])
+    p[p==0]<-"<0.001"
+
+    mtext(paste0("(",letters[a],")"), side=3, line=-2.5, adj=0.05, cex=0.9)
+    mtext(paste0("p",p[1]), side=3, line=-4, adj=0.05,cex=0.8)
+    mtext(paste0("p",p[2]), side=3, line=-4, adj=0.95,cex=0.8)
     a<-a+1
   }
 }
 par(fig = c(0, 1, 0, 1), oma=c(1,3,0,0), mar = c(3, 3, 0, 0), new = TRUE)
 plot(NA, xlim=c(0,1),ylim=c(0,1), xlab="frequency",ylab="phase angle",
      type = "n", bty = "n", xaxt = "n", yaxt = "n", cex.lab=1, font.lab=1)
-mtext("near-shore", side=3, line=-2, adj=0.2, cex=0.9)
-mtext("off-shore", side=3, line=-2, adj=0.7, cex=0.9)
-mtext("Chl-a", side=2, line=4, adj=0.82, cex=0.9)
-mtext("temperature", side=2, line=4, adj=0.5, cex=0.9)
-mtext("nitrate", side=2, line=4, adj=0.12, cex=0.9)
+mtext("near-shore", side=3, line=-2, adj=0.2, cex=0.9, col="blue")
+mtext("off-shore", side=3, line=-2, adj=0.7, cex=0.9, col="blue")
+mtext("Chl-a", side=2, line=4, adj=0.82, cex=0.9, col="blue")
+mtext("temperature", side=2, line=4, adj=0.5, cex=0.9, col="blue")
+mtext("nitrate", side=2, line=4, adj=0.12, cex=0.9, col="blue")
 mtext("p-values", side=4, line=-2, cex=0.9, col="red")
 par(op)
 dev.off()

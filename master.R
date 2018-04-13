@@ -5,6 +5,12 @@
 #_________
 
 #***DAN: either now or later, put in checkpoint functionality and also see if we can install reumanplatz as it existed on a particular date
+library(checkpoint)
+if (!dir.exists("./.checkpoint/")){
+  dir.create("./.checkpoint/")
+}
+checkpoint("2018-04-13",checkpointLocation = "./")
+
 #***DAN: we also need to review the wavelet tests
 
 #***load the raw data and get the seasonal data ***
@@ -33,6 +39,7 @@ source("main_data_TwoLayers.R")
 source("main_network.R")
 
 #*** show timeseries for shallow and deep, and show correlations between shallow and deep ***
+#also output the distance from shore ("res_distance_from_shore.RDS")
 source("main_TwoLayers_ts_correlation.R")
 
 #*** get spatial coherence of chla, T, and N between shallow and deep for near-shore and off-shore ***

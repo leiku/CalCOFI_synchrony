@@ -41,72 +41,43 @@ saveRDS(ans,"res_coherence_factors_clean.RDS")
 ############ plot test: phase angle vs. freq ###################
 ans<-readRDS("res_coherence_factors_clean.RDS")
 ### plot
-tiff("Fig_test_phase_vs_freq_factors.tif", width=6, height=10, units="in",res=300,compression = "lzw")
+tiff("Fig_test_phase_vs_freq_factors.tif", width=7, height=10, units="in",res=300,compression = "lzw")
 op<-par(mfrow=c(4,2), oma=c(3,5,2,3), mar=c(2,2,1,1),mgp=c(2,0.5,0))
 a<-1
-for(i in 1:4){
-  X<-ans[[i]]
-  for(j in 1:2){
-    x<-X[[j]]
-    plot(1/x$timescales, x$Arg, ylim=c(-pi, pi), pch=20, xlab=NA, ylab=NA,cex=1.5)
+for(i in 1:2){
+  for(j in 1:4){
+    x<-ans[[j]][[i]]
+    plot(x$timescales, x$Arg, ylim=c(-pi, pi), pch=20, xlab=NA, ylab=NA,cex=1.5)
     
     par(usr=c(par("usr")[1:2], c(0,1)))
-    lines(1/x$timescales, x$p.timescale,  col="red")
-    lines(range(1/x$timescales), c(0.05,0.05), lty="dashed", col="red")
+    lines(x$timescales, x$p.timescale,  col="red")
+    lines(range(x$timescales), c(0.05,0.05), lty="dashed", col="red")
     axis(4,col.axis="red",col.lab="red")
     
-    mtext(paste0("(",letters[a],")"), side=3, line=-2.2, adj=0.05, cex=0.9)
-    mtext(paste0("p(low-freq): ",round(x$pvals[5],3)), side=3, line=-3.2, adj=0.95,cex=0.8)
-    mtext(paste0("p(high-freq): ",round(x$pvals[4],3)), side=3, line=-4.5, adj=0.95,cex=0.8)
+    lines(c(4,4),c(-4,4), lty="dashed", col="darkgray")
+    
+    p<-as.character(round(x$pvals[4:5],3))
+    p[p!=0]<-paste0("=",p[p!=0])
+    p[p==0]<-"<0.001"
+    
+    mtext(paste0("(",letters[a],")"), side=3, line=-2.5, adj=0.05, cex=0.9)
+    mtext(paste0("p",p[1]), side=3, line=-4, adj=0.05,cex=0.8)
+    mtext(paste0("p",p[2]), side=3, line=-4, adj=0.95,cex=0.8)
     a<-a+1
   }
 }
 par(fig = c(0, 1, 0, 1), oma=c(1,3,0,0), mar = c(3, 3, 0, 0), new = TRUE)
-plot(NA, xlim=c(0,1),ylim=c(0,1), xlab="frequency",ylab="phase angle",
+plot(NA, xlim=c(0,1),ylim=c(0,1), xlab="timescale",ylab="phase angle",
      type = "n", bty = "n", xaxt = "n", yaxt = "n", cex.lab=1.2, font.lab=1)
-mtext("Temperature", side=3, line=-2, adj=0.2, cex=0.9)
-mtext("Nitrate", side=3, line=-2, adj=0.7, cex=0.9)
-mtext("shallow.near", side=2, line=4, adj=0.9, cex=0.9)
-mtext("shallow.off", side=2, line=4, adj=0.6, cex=0.9)
-mtext("deep.near", side=2, line=4, adj=0.36, cex=0.9)
-mtext("deep.off", side=2, line=4, adj=0.09, cex=0.9)
+mtext("near-shore", side=3, line=-2, adj=0.18, cex=0.9, col="blue")
+mtext("off-shore", side=3, line=-2, adj=0.72, cex=0.9, col="blue")
+mtext("shallow", side=2, line=4, adj=0.9, cex=0.9,col="blue")
+mtext("deep", side=2, line=4, adj=0.6, cex=0.9,col="blue")
+mtext("shallow", side=2, line=4, adj=0.36, cex=0.9,col="blue")
+mtext("deep", side=2, line=4, adj=0.09, cex=0.9,col="blue")
 mtext("p-values", side=4, line=-2, cex=0.9, col="red")
 par(op)
 dev.off()
-
-
-
-
-########### Fig4: rose diagram (chla vs. factors) ##############
-ans<-readRDS("res_coherence_factors_clean.RDS")
-library(circular)
-tiff("Fig4_rose_diagram_factors.tif", width=5, height=5, units="in",res=300,compression = "lzw")
-op<-par(mfrow=c(2,2), oma=c(1,1,2,1), mar=c(2,2,1,1),mgp=c(2,0.5,0))
-a<-1
-for(f in 1:3){
-  for(j in 1:2){
-    x<-ans[[a]]
-    if(a==1){
-      rose.phase<-Arg(x$emp.coh[x$timescales<4])  #discard low frequency for chla vs chla nearshore
-    }else{rose.phase<-Arg(x$emp.coh)}
-    
-    rose.diag(circular(rose.phase), bins=16, col="grey")
-    mtext(paste0("(",letters[a],")"), side=3, line=-1.2, adj=0.05, cex=0.9)
-    a<-a+1
-  }
-}
-par(fig = c(0, 1, 0, 1), oma=c(1,1,0,0), mar = c(3, 3, 0, 0), new = TRUE)
-plot(NA, xlim=c(0,1),ylim=c(0,1), xlab=NA,ylab=NA,
-     type = "n", bty = "n", xaxt = "n", yaxt = "n", cex.lab=1.2, font.lab=2)
-mtext("near-shore", side=3, line=-2, adj=0.1, cex=0.9)
-mtext("off-shore", side=3, line=-2, adj=0.78, cex=0.9)
-mtext("Chl-a", side=2, line=1, adj=0.82, cex=0.9)
-mtext("temperature", side=2, line=1, adj=0.45, cex=0.9)
-mtext("nitrate", side=2, line=1, adj=0.08, cex=0.9)
-par(op)
-dev.off()
-
-
 
 
 ############### Fig4: rose diagram (Chla vs. T or NO3) #############
@@ -139,3 +110,4 @@ mtext("deep", side=2, line=-1, adj=0.25, cex=0.9)
 legend(0.38,0.08, c("Chl-a vs. T", "Chl-a vs. NO3"), pch=15, col=c("red","blue"), cex=0.9)
 par(op)
 dev.off()
+
