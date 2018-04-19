@@ -23,9 +23,9 @@ X<-list(C.deep=C.deep, C.shal=C.shal, T.deep=T.deep, N.deep=N.deep)
 
 ######## wavelet multiple linear regression ###########
 source('Fn_wmrsig.test.R')
-tsranges2<-matrix(c(2,12, 2,4, 4,12), 3,2, byrow=T)  # all, short (2-4), long (4-12)
+tsranges2<-matrix(c(2,Inf, 2,4, 4,Inf), 3,2, byrow=T)  # all, short (2-4), long (4-12)
 ans.sC<-wmrsig(X, r=1, n=3, s=2, n.surrog = 10000, surr.test = T, surr.type="fft", tsranges = tsranges2) #surrogate C
-ans.sTN<-wmrsig.twos(X, r=1, n=3, s=c(3,4), n.surrog = 10000, surr.test = T, surr.type="fft", tsranges = tsranges2) #surrogate T&N
+ans.sTN<-wmrsig.twos(X, r=1, n=3, s=c(3,4), n.surrog = 100, surr.test = T, surr.type="fft", tsranges = tsranges2) #surrogate T&N
 ans.oC<-wmrsig(X[1:2], r=1, n=1, s=2, n.surrog = 10000, surr.test = T, surr.type="fft", tsranges = tsranges2)  #only contain C
 ans.oTN<-wmrsig.twos(X[c(1,3,4)], r=1, n=2, s=c(2,3), n.surrog = 10000, surr.test = T, surr.type="fft", tsranges = tsranges2)  #only contain T&N
 ans<-list(sC=ans.sC, sTN=ans.sTN, oC=ans.oC, oTN=ans.oTN)
