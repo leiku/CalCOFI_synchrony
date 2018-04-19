@@ -44,8 +44,6 @@
 #' @export
 #' 
 
-changes on master branch
-
 wmodel.test<-function(trans0f, transnf, n, freqs){ ## wrapper function to loop through frequencies and remove NA's (e.g., scallopping)
   if(n==1){stop("Error: n should be higher than 1")}
   
